@@ -22,6 +22,7 @@ export const Td = styled.td`
   height: 45px;
   padding: 8px;
   padding: 0 16px;
+  font-weight: ${(props) => props.$fontWeight || "400"};
 `;
 
 export const TableRow = styled.tr`
@@ -31,11 +32,11 @@ export const TableRow = styled.tr`
 `;
 
 export const FirstColumnTd = styled(Td)`
-  border-right: 1px solid #d9d9d6; /* Agrega un borde a la izquierda en la primera columna */
+  border-right: 1px solid #d9d9d6;
 `;
 
 export const FirstColumnTh = styled(Th)`
-  border-right: 1px solid #d9d9d6; /* Agrega un borde a la izquierda en la primera columna */
+  border-right: 1px solid #d9d9d6;
 `;
 
 export const PaginateContainer = styled.div`

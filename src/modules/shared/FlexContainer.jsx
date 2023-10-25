@@ -10,6 +10,7 @@ export const FlexContainer = styled.div`
   align-items: ${(props) => props.$alignItems || "start"};
   ${(props) => props.$overflow && `overflow: ${props.$overflow};`}
   ${(props) => props.$maxWidth && `max-width: ${props.$maxWidth};`}
+  ${(props) => props.$gap && `gap: ${props.$gap};`}
 `;
 
 FlexContainer.propTypes = {

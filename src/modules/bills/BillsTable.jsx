@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   FirstColumnTd,
@@ -14,16 +14,20 @@ import { Text } from "../shared/Text";
 import { Checkbox, InputText } from "../shared/Input";
 import { FlexContainer } from "../shared/FlexContainer";
 import { CustomStatus } from "./CustomStatus";
+import Button from "../shared/Button";
 
 export const BillsTable = ({ data, setData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredData, setFilteredData] = useState(data);
   const [filter, setFilter] = useState("");
-
   const itemsPerPage = 10;
   const offset = currentPage * itemsPerPage;
   const currentData = filteredData.slice(offset, offset + itemsPerPage);
   const pageCount = Math.ceil(data.length / itemsPerPage);
+
+  useEffect(() => {
+    handleChangeInput(filter);
+  }, [data]);
 
   const handleChangeInput = (_value) => {
     setFilter(_value);
@@ -42,8 +46,20 @@ export const BillsTable = ({ data, setData }) => {
     setCurrentPage(selected);
   };
 
-  const handleCheckboxChange = (_data) => {
-    console.log(_data);
+  const handleCheckboxChange = (_data, id) => {
+    const newData = data.map((item) =>
+      item.codigo === id ? { ...item, checked: !item.checked } : item
+    );
+    setData(newData);
+  };
+
+  const handleDecline = () => {
+    const newData = data.map((item) => ({
+      ...item,
+      estado: item.checked ? "Rechazada" : item.estado,
+      checked: false,
+    }));
+    setData(newData);
   };
 
   return (
@@ -56,7 +72,7 @@ export const BillsTable = ({ data, setData }) => {
         archivos de texto. Lorem Ipsum es simplemente el texto de relleno de las
         imprentas y archivos .
       </Text>
-      <FlexContainer>
+      <FlexContainer $direction="row" $justifyContent="space-between">
         <InputText
           $marginBottom="20px"
           type="text"
@@ -64,6 +80,7 @@ export const BillsTable = ({ data, setData }) => {
           value={filter}
           onChange={(e) => handleChangeInput(e.target.value)}
         />
+        <Button onClick={handleDecline}>Rechazar</Button>
       </FlexContainer>
       <FlexContainer $overflow="scroll">
         <Table>
@@ -82,14 +99,21 @@ export const BillsTable = ({ data, setData }) => {
             {currentData.map((item, index) => (
               <TableRow key={index}>
                 <FirstColumnTd>
-                  <Checkbox
-                    checked={item.checked}
-                    onChange={handleCheckboxChange}
-                    onClick={handleCheckboxChange}
-                  />
-                  {item.codigo}
+                  <FlexContainer
+                    $direction="row"
+                    $alignItems="center"
+                    $gap="5px"
+                  >
+                    <Checkbox
+                      checked={item.checked}
+                      onChange={(e) =>
+                        handleCheckboxChange(e.target.checked, item.codigo)
+                      }
+                    />
+                    {item.codigo}
+                  </FlexContainer>
                 </FirstColumnTd>
-                <Td>{item.nombresApellidos}</Td>
+                <Td $fontWeight="800">{item.nombresApellidos}</Td>
                 <Td>{item.direccion}</Td>
                 <Td>{item.valorAPagar}</Td>
                 <Td>{item.fechaVencimiento}</Td>

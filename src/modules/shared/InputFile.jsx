@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Text } from "./Text";
@@ -13,9 +13,10 @@ const InputContainer = styled.div`
   max-width: 500px;
 `;
 
-export const InputFile = ({ fileTypes }) => {
+export const InputFile = ({ fileTypes, accept, setFiles }) => {
   const [dragging, setDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const inputRef = useRef(null);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -30,29 +31,38 @@ export const InputFile = ({ fileTypes }) => {
     e.preventDefault();
     setDragging(false);
     const files = Array.from(e.dataTransfer.files);
-    setSelectedFiles(files);
+    const filesFiltered = files.filter((file) => {
+      return accept.includes(file.type);
+    });
+    setSelectedFiles(filesFiltered);
+    setFiles(filesFiltered);
   };
 
   const handleFileInput = (e) => {
     const files = Array.from(e.target.files);
     setSelectedFiles(files);
+    setFiles(files);
   };
 
   return (
-    <FlexContainer>
+    <FlexContainer style={{ cursor: "pointer" }}>
       <InputContainer
-        className={`file-upload-container ${dragging ? "dragging" : ""}`}
+        style={{ cursor: "pointer" }}
+        className={`${dragging ? "dragging" : ""}`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onClick={() => inputRef.current && inputRef.current.click()}
       >
         <input
+          ref={inputRef}
           type="file"
           id="file-input"
           multiple
           onChange={handleFileInput}
           style={{ display: "none" }}
+          accept={accept}
         />
         <FlexContainer
           $direction="row"
@@ -60,10 +70,15 @@ export const InputFile = ({ fileTypes }) => {
           $alignItems="center"
         >
           <img src={iconDocument} />
-          <Text as="label" $fontWeight="900" $marginRight="30px">
+          <Text
+            style={{ cursor: "pointer" }}
+            as="label"
+            $fontWeight="900"
+            $marginRight="30px"
+          >
             Subir o arrastrar el archivo aquí
           </Text>
-          <Text as="label" $fontWeight="900">
+          <Text as="label" $fontWeight="900" style={{ cursor: "pointer" }}>
             {fileTypes}
           </Text>
         </FlexContainer>
@@ -74,4 +89,6 @@ export const InputFile = ({ fileTypes }) => {
 
 InputFile.propTypes = {
   fileTypes: PropTypes.string,
+  accept: PropTypes.string,
+  setFiles: PropTypes.func,
 };

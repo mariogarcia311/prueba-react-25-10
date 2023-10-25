@@ -5,10 +5,10 @@ import { ThemeContext } from "./ThemeContext";
 import ThemeReducer, { initialTheme } from "./ThemeReducer";
 
 const ThemeProvider = ({ children }) => {
-  const [store, dispatch] = useReducer(ThemeReducer, initialTheme);
-  // const storeDispatch = useMemo(() => [store, dispatch], [store, dispatch]);
+  const [store, dispatch] = useReducer(ThemeReducer, initialTheme());
+  const storeDispatch = useMemo(() => [store, dispatch], [store, dispatch]);
   return (
-    <ThemeContext.Provider value={[store, dispatch]}>
+    <ThemeContext.Provider value={storeDispatch}>
       {children}
     </ThemeContext.Provider>
   );

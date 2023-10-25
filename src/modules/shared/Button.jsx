@@ -11,19 +11,27 @@ const StyledButton = styled.button`
   font-size: 14px;
   min-height: 48px;
   min-width: 178px;
-
+  ${(props) =>
+    props.disabled && `background-color:var(--disabled); cursor:default;`}
   &:hover {
     background-color: var(--primary-hover);
+    ${(props) =>
+      props.disabled && `background-color:var(--disabled); cursor:default;`}
   }
 `;
 
-const Button = ({ children, onClick }) => {
-  return <StyledButton onClick={onClick}>{children || "text"}</StyledButton>;
+const Button = ({ children, onClick, disabled }) => {
+  return (
+    <StyledButton onClick={onClick} disabled={disabled}>
+      {children || "text"}
+    </StyledButton>
+  );
 };
 
 Button.propTypes = {
   children: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 export default Button;
